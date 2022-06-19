@@ -19,15 +19,15 @@ export class ScoreBoardService {
   constructor() {
     // initialize emitter
     this.scoreBoardSubject = new BehaviorSubject<ScoreBoard>(
-      // this.sortBoard(TEST_SCORE_BOARD)
-      EMPTY_SCORE_BOARD
+      this.sortBoard(TEST_SCORE_BOARD)
+      // EMPTY_SCORE_BOARD
     );
     this.scoreBoard$ = this.scoreBoardSubject.asObservable();
   }
 
   /**
    * Starts a game. Home and away teams must be specified and different. In the
-   * case of success updated score board is emitted asynchronously.
+   * case of success an updated score board is then emitted asynchronously.
    *
    * @param homeTeam Home team.
    * @param awayTeam Away team.
@@ -51,9 +51,10 @@ export class ScoreBoardService {
   }
 
   /**
-   * Finishes the specified match (game). Updated score board is emitted
-   * asynchronously. If the match is not present in score board, the original
-   * score board is emitted.
+   * Finishes the specified match (game). It is expected that the input match
+   * does not change home and away teams, just score. Updated score board is
+   * then emitted asynchronously. If the match is not present in score board,
+   * the original score board is emitted.
    *
    * @param match Match to be finished.
    */
