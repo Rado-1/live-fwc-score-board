@@ -1,15 +1,29 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Match, ScoreBoard } from '../models/match';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { TEST_SCORE_BOARD } from '../data/test-score-board';
+import {
+  Match,
+  ScoreBoard,
+  EMPTY_SCORE_BOARD,
+  isMatchValid,
+} from '../models/match';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScoreBoardService {
+  private scoreBoardSubject: BehaviorSubject<ScoreBoard>;
   /** public score board update emitter */
-  scoreBoard$ = new Observable<ScoreBoard>();
+  scoreBoard$: Observable<ScoreBoard>;
 
-  constructor() {}
+  constructor() {
+    // initialize emitter
+    this.scoreBoardSubject = new BehaviorSubject<ScoreBoard>(
+      // this.sortBoard(TEST_SCORE_BOARD)
+      EMPTY_SCORE_BOARD
+    );
+    this.scoreBoard$ = this.scoreBoardSubject.asObservable();
+  }
 
   /**
    * Starts a game. Home and away teams must be specified and different. In the
@@ -20,7 +34,20 @@ export class ScoreBoardService {
    * @returns Created match if the game was successfully started, null if wrong inputs
    */
   startGame(homeTeam: string, awayTeam: string): Match | null {
-    throw 'not implemented';
+    const newMatch = {
+      homeTeam,
+      awayTeam,
+      homeTeamScore: 0,
+      awayTeamScore: 0,
+      timestamp: Date.now(),
+    };
+
+    if (isMatchValid(newMatch)) {
+      this.emit([...this.scoreBoardSubject.getValue(), newMatch]);
+      return newMatch;
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -31,7 +58,7 @@ export class ScoreBoardService {
    * @param match Match to be finished.
    */
   finishGame(match: Match) {
-    throw 'not implemented';
+    this.emit(this.removeMatch(match));
   }
 
   /**
@@ -43,6 +70,31 @@ export class ScoreBoardService {
    * @returns true if the match is correct, false otherwise
    */
   updateScore(match: Match): boolean {
-    throw 'not implemented';
+    if (isMatchValid(match)) {
+      this.emit([...this.removeMatch(match), match]);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private emit(scoreBoard: ScoreBoard) {
+    this.scoreBoardSubject.next(this.sortBoard(scoreBoard));
+  }
+
+  private sortBoard(scoreBoard: ScoreBoard): ScoreBoard {
+    return scoreBoard.sort((a, b) => {
+      const comp =
+        b.homeTeamScore + b.awayTeamScore - a.homeTeamScore - a.awayTeamScore;
+
+      return comp !== 0 ? comp : b.timestamp - a.timestamp;
+    });
+  }
+
+  private removeMatch(match: Match): ScoreBoard {
+    const board = this.scoreBoardSubject.getValue();
+    const i = board.findIndex((m) => m.timestamp === match.timestamp);
+
+    return i === -1 ? board : [...board.slice(0, i), ...board.slice(i + 1)];
   }
 }
