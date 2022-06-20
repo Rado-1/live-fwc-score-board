@@ -43,7 +43,7 @@ Commit: [ _Empty angular project_](https://github.com/Rado-1/live-fwc-score-boar
 
 This project was generated with [Angular
 CLI](https://github.com/angular/angular-cli) version 14.0. Nothing special to
-check at th is stage.
+check at this stage.
 
 ### 2. Generate empty service and high-level testing specs
 
@@ -54,12 +54,12 @@ The whole application logic is implemented in a single service
 [`score-board.service.ts`](https://github.com/Rado-1/live-fwc-score-board/blob/main/src/app/services/score-board.service.ts)).
 The BDD/TDD principles are
 illustrated only on unit testing of this service. Application UI is from
-testing excluded for simplification reasons.
+testing excluded.
 
-At this stage, simple testing specs, written from user's perspective, were added
+At this stage, simple testing specs written from the user's perspective were added
 to the
 [score-board.service.spec.ts](https://github.com/Rado-1/live-fwc-score-board/commit/43e11a1d6f11ec5d70e8d21ad1304d58f7e21a66#diff-01cce9bb45490913506e68c9790b42299371d65a76a7c7305346255d5862126c)
-file. The success scenarios could be identified by "should allow to..." and
+file. Success scenarios could be identified by "should allow to..." and
 failure scenarios by "should avoid...". Unit tests are written in [Jasmine](https://jasmine.github.io/).
 
 Running the tests results in:
@@ -70,16 +70,21 @@ The generated spec `should be created` is successful, the newly defined specs ar
 
 ### 3. Definition of the ScoreBoardService API
 
-Commit: [_ScoreBoardService API defined_](https://github.com/Rado-1/live-fwc-score-board/commit/40acb3ff2cb6760731f6171a65241af50885b40d)
+Commit: [_ScoreBoardService API
+defined_](https://github.com/Rado-1/live-fwc-score-board/commit/40acb3ff2cb6760731f6171a65241af50885b40d)
 
-In order to provide later implementation of testing specs, this step added API to the
+_Note: The previously committed `ScoreBoardServiceService` was renamed to
+`ScoreBoardService` because of a typo._
+
+In order to provide later implementation of testing specs, this step adds API to the
 [ScoreBoardService](https://github.com/Rado-1/live-fwc-score-board/commit/40acb3ff2cb6760731f6171a65241af50885b40d#diff-b658c3dba276b9a720156c3324375daa6518e029bd9e0b62fbefbfcbe84d06a6).
-The public methods implementing the basic application functionality are executed
-synchronously, but their result, i.e., updated score
-board, is delivered asynchronously. This is due to good practices in Angular
-using reactive UI patterns.
 
-All public methods throw 'not implemented' exception causing temporal failure of
+The public methods that provide the basic application functionality are executed
+synchronously, but their result, i.e., updated score
+board, is delivered asynchronously. Score board is implemented as an immutable
+array. This is due to good practices of reactive UI patterns applied for Angular.
+
+For now, all public methods throw 'not implemented' exception causing temporal failure of
 future tests until the functionality is fully implemented by the service.
 
 Running the tests have the same result as in the previous process step.
