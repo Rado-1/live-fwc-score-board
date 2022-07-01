@@ -1,0 +1,26 @@
+.score-board {
+  width: fit-content;
+  max-width: 80%;
+}
+
+table {
+  margin-bottom: 12px;
+}
+
+.mat-cell {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+button {
+  margin-right: 12px;
+}
+
+.score-column {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.team-header {
+  padding-left: 24px;
+  padding-right: 24px;
+}

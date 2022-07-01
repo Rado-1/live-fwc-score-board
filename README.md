@@ -1,5 +1,3 @@
-<p align="center"><img alt="logo" src="./src/favicon.svg?raw=true"/></p>
-
 # Live Football World Cup Score Board
 
 <p ><img alt="Angular" src="https://img.shields.io/badge/-Angular-C3002F?logo=Angular&logoColor=white"/> <img alt="TypeScript" src="https://img.shields.io/badge/-TypeScript-3178C6?logo=TypeScript&logoColor=white"/></p>
@@ -13,8 +11,7 @@ to:
 - finish a game which removes it from the score board.
 
 The application was built with _behavior-driven development_ (_BDD_) and
-_test-driven development_ (_TDD_) in mind; see the [development process
-later](#development-process).
+_test-driven development_ (_TDD_) in mind; see [Step-by-step story](#step-by-step-story) later.
 
 ## Installation
 
@@ -31,7 +28,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Development process
+## Step-by-step story
 
 The application was created in the following steps corresponding to [Git
 commits](https://github.com/Rado-1/live-fwc-score-board/commits/main) on the
@@ -53,10 +50,10 @@ The whole application logic is implemented in a single service
 `ScoreBoardService` (file
 [`score-board.service.ts`](https://github.com/Rado-1/live-fwc-score-board/blob/main/src/app/services/score-board.service.ts)).
 The BDD/TDD principles are
-illustrated only on unit testing of this service. Application UI is from
-testing excluded.
+illustrated only on unit testing of this service. Application UI is from testing
+excluded intentionally to make the example simpler at this stage.
 
-At this stage, simple testing specs written from the user's perspective were added
+Simple testing specs written from the user's perspective were added
 to the
 [score-board.service.spec.ts](https://github.com/Rado-1/live-fwc-score-board/commit/43e11a1d6f11ec5d70e8d21ad1304d58f7e21a66#diff-01cce9bb45490913506e68c9790b42299371d65a76a7c7305346255d5862126c)
 file. Success scenarios could be identified by "should allow to..." and
@@ -121,7 +118,37 @@ Commit: [_UI implemented_](https://github.com/Rado-1/live-fwc-score-board/commit
 Implementation of UI in Angular Material. All UI is implemented in
 `AppComponent` and related "child" components located in the same file
 [`app.component.ts `](https://github.com/Rado-1/live-fwc-score-board/blob/main/src/app/app.component.ts).
+This can be considered as the end of the 1st iteration of the TDD life cycle.
 
 Screenshot:
 
 ![Screenshot](doc/img/scr.png?raw=true "Screenshot")
+
+### 7. Refactoring the service
+
+Commit: [_ScoreBoardService refactoring_](https://github.com/Rado-1/live-fwc-score-board/commit/96b40f37c9f2a9cb3683b904508494a076219e2b)
+
+API and implementation of the `ScoreBoardService` is refactored. Method
+signatures are unified and error handling is standardized. This breaks the previously
+written tests.
+
+Running the tests results in:
+
+![Test run #4](doc/img/testrun4.png?raw=true "Test run #4")
+
+### 8. Fixing the service tests
+
+Commit: [_ScoreBoardService test fixing_](https://github.com/Rado-1/live-fwc-score-board/commit/f4436c9d3999e24e1567814775867dd018b3e051)
+
+The failing tests of the `ScoreBoardService` are fixed, the structure of tests
+is updated and new tests are added.
+
+Running the tests results in:
+
+![Test run #5](doc/img/testrun5.png?raw=true "Test run #5")
+
+### 9. Final iterations
+
+During several other iterations of code refactoring and unit test
+fixing/adding/refactoring, the project has been restructured and UI component tests have
+been added. All tests are green now.

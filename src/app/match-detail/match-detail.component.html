@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{ isNew ? 'Start a Game' : 'Update Score'}}</h1>
+<h1 mat-dialog-title>{{ isNew ? "Start a Game" : "Update Score" }}</h1>
 
 <div mat-dialog-content>
   <table>
@@ -6,9 +6,12 @@
       <td>
         <mat-form-field appearance="outline">
           <mat-label>Home team</mat-label>
-          <mat-select [formControl]="homeTeam">
+          <mat-select
+            [formControl]="homeTeam"
+            (selectionChange)="sameTeamChecker()"
+          >
             <mat-option *ngFor="let team of teams" [value]="team">
-              {{team}}
+              {{ team }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="homeTeam.errors?.['required']"
@@ -23,9 +26,12 @@
       <td>
         <mat-form-field appearance="outline">
           <mat-label>Away team</mat-label>
-          <mat-select [formControl]="awayTeam">
+          <mat-select
+            [formControl]="awayTeam"
+            (selectionChange)="sameTeamChecker()"
+          >
             <mat-option *ngFor="let team of teams" [value]="team">
-              {{team}}
+              {{ team }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="awayTeam.errors?.['required']"
