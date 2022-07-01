@@ -1,5 +1,22 @@
 import { TestBed } from '@angular/core/testing';
+import {
+  TEST_SCORE_BOARD,
+  TEST_SCORE_BOARD_ORDERED,
+} from '../data/test-score-board';
+import { Match } from '../models/match';
+import { ScoreBoard } from '../models/score-board';
 import { ScoreBoardService } from './score-board.service';
+
+// auxiliary function to flatten score board for comparison
+const makeFlatten = (sb: ScoreBoard) =>
+  sb
+    .map((m: Match) => [
+      m.homeTeam,
+      m.awayTeam,
+      m.homeTeamScore,
+      m.awayTeamScore,
+    ])
+    .flat();
 
 describe('ScoreBoardService', () => {
   let service: ScoreBoardService;
@@ -25,19 +42,19 @@ describe('ScoreBoardService', () => {
     });
   });
 
-  it('should avoid starting incorrect game', () => {
-    // avoid entering match with the same team
-    expect(service.startGame('Argentina', 'Argentina')).toBeNull();
+  it('should avoid starting game with same teams', () => {
+    expect(() => service.startGame('Argentina', 'Argentina')).toThrowError(
+      'Invalid teams'
+    );
   });
 
   it('should allow to update match score', (done) => {
-    // successfully create match
+    // start game
     let match = service.startGame('Argentina', 'Belgium');
-    expect(match).toBeTruthy();
 
     // successfully update score
     match = { ...match!, homeTeamScore: 111, awayTeamScore: 222 };
-    expect(service.updateScore(match)).toBeTrue();
+    expect(service.updateScore(match)).toBeUndefined();
 
     // successfully updated score board - score is updated
     service.scoreBoard$.subscribe((scoreBoard) => {
@@ -49,31 +66,54 @@ describe('ScoreBoardService', () => {
     });
   });
 
-  it('should avoid updating incorrect match score', () => {
-    // successfully create match
+  it('should avoid updating negative match score', () => {
+    // start game
     let match = service.startGame('Argentina', 'Belgium');
-    expect(match).toBeTruthy();
 
-    // avoid update match with negative score
+    // error expected
     match = { ...match!, homeTeamScore: -3 };
-    expect(service.updateScore(match)).toBeFalse();
+    expect(() => service.updateScore(match)).toThrowError('Invalid match');
+  });
 
-    // avoid update match with decimal score
+  it('should avoid updating decimal match score', () => {
+    // start game
+    let match = service.startGame('Argentina', 'Belgium');
+
+    // error expected
     match = { ...match!, homeTeamScore: 1.11 };
-    expect(service.updateScore(match)).toBeFalse();
+    expect(() => service.updateScore(match)).toThrowError('Invalid match');
   });
 
   it('should allow to finish a game', (done) => {
-    // successfully create match
+    // start game
     const match = service.startGame('Argentina', 'Belgium');
-    expect(match).toBeTruthy();
 
-    // successfully finish game
+    // finish game
     service.finishGame(match!);
 
     // successfully updated score board - the match is removed
     service.scoreBoard$.subscribe((scoreBoard) => {
       expect(scoreBoard).not.toContain(match!);
+      done();
+    });
+  });
+
+  it('should correctly order matches in score board', (done) => {
+    // start games
+    TEST_SCORE_BOARD.forEach((match) => {
+      const m: Match = {
+        ...service.startGame(match.homeTeam, match.awayTeam),
+        homeTeamScore: match.homeTeamScore,
+        awayTeamScore: match.awayTeamScore,
+      };
+
+      service.updateScore(m);
+    });
+
+    service.scoreBoard$.subscribe((scoreBoard) => {
+      expect(makeFlatten(scoreBoard)).toEqual(
+        makeFlatten(TEST_SCORE_BOARD_ORDERED)
+      );
       done();
     });
   });
