@@ -129,10 +129,9 @@ Screenshot:
 Commit: [_ScoreBoardService refactoring_](https://github.com/Rado-1/live-fwc-score-board/commit/96b40f37c9f2a9cb3683b904508494a076219e2b)
 
 API and implementation of the `ScoreBoardService` is refactored. Method
-signatures are unified and error handling is standardized. This breaks the previously
-written tests.
+signatures are unified and error handling is standardized.
 
-Running the tests results in:
+This breaks the previously written tests:
 
 ![Test run #4](doc/img/testrun4.png?raw=true "Test run #4")
 
@@ -149,6 +148,12 @@ Running the tests results in:
 
 ### 9. Final iterations
 
-During several other iterations of code refactoring and unit test
-fixing/adding/refactoring, the project has been restructured and UI component tests have
-been added. All tests are green now.
+Commit: [_Finalize_](https://github.com/Rado-1/live-fwc-score-board/commit/82ac4bcddb814cdc19258d8728f8a5d5f510e975)
+
+To make the story shorter, the project has been finalized during several other
+TDD iterations of code refactoring and unit test fixing/adding/refactoring. Also
+testing of UI components has been added.
+
+All tests are green now:
+
+![Test run #6](doc/img/testrun6.png?raw=true "Test run #6")
