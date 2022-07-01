@@ -1,60 +1,50 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { TEST_SCORE_BOARD } from '../data/test-score-board';
-import {
-  Match,
-  ScoreBoard,
-  EMPTY_SCORE_BOARD,
-  isMatchValid,
-} from '../models/match';
+
+import { Match, isMatchValid } from '../models/match';
+import { ScoreBoard, EMPTY_SCORE_BOARD } from '../models/score-board';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScoreBoardService {
+  private newMatchId = 1;
   private scoreBoardSubject: BehaviorSubject<ScoreBoard>;
-  /** public score board update emitter */
+  /** An Observable emitting all changes of score board. */
   scoreBoard$: Observable<ScoreBoard>;
 
   constructor() {
-    // initialize emitter
-    this.scoreBoardSubject = new BehaviorSubject<ScoreBoard>(
-      this.sortBoard(TEST_SCORE_BOARD)
-      // EMPTY_SCORE_BOARD
-    );
+    this.scoreBoardSubject = new BehaviorSubject<ScoreBoard>(EMPTY_SCORE_BOARD);
     this.scoreBoard$ = this.scoreBoardSubject.asObservable();
   }
 
   /**
-   * Starts a game. Home and away teams must be specified and different. In the
-   * case of success an updated score board is then emitted asynchronously.
+   * Starts a game.
    *
    * @param homeTeam Home team.
    * @param awayTeam Away team.
-   * @returns Created match if the game was successfully started, null if wrong inputs
+   * @returns Created match if the game was successfully started.
+   * @throws Error if the same teams provided.
    */
-  startGame(homeTeam: string, awayTeam: string): Match | null {
-    const newMatch = {
+  startGame(homeTeam: string, awayTeam: string): Match {
+    let newMatch: Match = {
       homeTeam,
       awayTeam,
       homeTeamScore: 0,
       awayTeamScore: 0,
-      timestamp: Date.now(),
+      id: this.newMatchId++,
     };
 
     if (isMatchValid(newMatch)) {
       this.emit([...this.scoreBoardSubject.getValue(), newMatch]);
       return newMatch;
     } else {
-      return null;
+      throw Error('Invalid teams');
     }
   }
 
   /**
-   * Finishes the specified match (game). It is expected that the input match
-   * does not change home and away teams, just score. Updated score board is
-   * then emitted asynchronously. If the match is not present in score board,
-   * the original score board is emitted.
+   * Finishes the specified match (game).
    *
    * @param match Match to be finished.
    */
@@ -63,19 +53,16 @@ export class ScoreBoardService {
   }
 
   /**
-   * Updates score of a match. Updated score board is emitted asynchronously.
-   * If the match is not present in score board, the original score board is
-   * emitted.
+   * Updates score of a match.
    *
    * @param match Match with updated score.
-   * @returns true if the match is correct, false otherwise
+   * @throws Error if the provided match is invalid.
    */
-  updateScore(match: Match): boolean {
+  updateScore(match: Match) {
     if (isMatchValid(match)) {
       this.emit([...this.removeMatch(match), match]);
-      return true;
     } else {
-      return false;
+      throw Error('Invalid match');
     }
   }
 
@@ -88,13 +75,13 @@ export class ScoreBoardService {
       const comp =
         b.homeTeamScore + b.awayTeamScore - a.homeTeamScore - a.awayTeamScore;
 
-      return comp !== 0 ? comp : b.timestamp - a.timestamp;
+      return comp !== 0 ? comp : b.id - a.id;
     });
   }
 
   private removeMatch(match: Match): ScoreBoard {
     const board = this.scoreBoardSubject.getValue();
-    const i = board.findIndex((m) => m.timestamp === match.timestamp);
+    const i = board.findIndex((m) => m.id === match.id);
 
     return i === -1 ? board : [...board.slice(0, i), ...board.slice(i + 1)];
   }

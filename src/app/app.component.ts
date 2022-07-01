@@ -112,7 +112,7 @@ export class DialogMatchDetail {
       awayTeam: this.awayTeam.value ?? '',
       homeTeamScore: this.homeTeamScore.value ?? 0,
       awayTeamScore: this.awayTeamScore.value ?? 0,
-      timestamp: this.isNew ? Date.now() : this.data.timestamp,
+      id: this.isNew ? Date.now() : this.data.id,
     };
 
     if (isMatchValid(match)) {

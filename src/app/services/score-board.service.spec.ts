@@ -41,9 +41,7 @@ describe('ScoreBoardService', () => {
 
     // successfully updated score board - score is updated
     service.scoreBoard$.subscribe((scoreBoard) => {
-      const updatedMatch = scoreBoard.find(
-        (m) => m.timestamp === match?.timestamp
-      );
+      const updatedMatch = scoreBoard.find((m) => m.id === match?.id);
 
       expect(updatedMatch?.homeTeamScore).toBe(111);
       expect(updatedMatch?.awayTeamScore).toBe(222);
